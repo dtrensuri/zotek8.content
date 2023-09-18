@@ -6,6 +6,7 @@ import './globals.scss'
 import 'font-awesome/css/font-awesome.min.css';
 import Footer from './Components/Footer/Footer';
 import AppNavbar from "./Components/NavBar/AppNavBar"
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const inter = Inter({ subsets: ['latin'] })
 
