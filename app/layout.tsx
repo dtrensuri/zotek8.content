@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.scss'
 import 'font-awesome/css/font-awesome.min.css';
+import Footer from './Components/Footer/Footer';
+import AppNavbar from "./Components/NavBar/AppNavBar"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +21,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+
+      <body className={inter.className}>
+        <div className="bg-gray-200">
+          <AppNavbar></AppNavbar>
+          {children}
+          <Footer></Footer>
+        </div>
+      </body>
+
     </html>
   )
 }
