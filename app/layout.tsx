@@ -7,6 +7,9 @@ import 'font-awesome/css/font-awesome.min.css';
 import Footer from './Components/Footer/Footer';
 import AppNavbar from "./Components/NavBar/AppNavBar"
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const inter = Inter({ subsets: ['latin'] })
 

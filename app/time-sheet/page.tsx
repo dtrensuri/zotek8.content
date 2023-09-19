@@ -6,10 +6,18 @@ const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Loading from "../Components/Loading/Loading"
+import Searching from "../Components/Loading/searching"
+import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
 
 const TimeSheet = () => {
     // const router = useRouter();
     const [optionsState, setOptionsState] = useState(1);
+    const [already, setAlready] = useState(false);
+    const [perPage, setPerPage] = useState(50);
+    const [searching, setSearching] = useState(false);
+    const [page, setPage] = useState(1);
+    const [resultTimeSheet, setResultTimeSheet] = useState();
 
     const listSideMenu = {
         'TimeSheet':
@@ -59,16 +67,23 @@ const TimeSheet = () => {
 
     const callApiGetTimesheet = () => {
         axios.request({
-            url: '',
+            url: 'http://localhost:8080/api//user/get-time-sheets',
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
-        })
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+            },
+            params: {
+                page: page,
+                perPage: perPage,
+            },
+        }).then(response => {
+            setResultTimeSheet(response.data.results);
+            console.log(response);
+        }).catch(err => {
+            alert(err.message)
+        });
     }
-
-
 
     const sidebarComponents = _.map(listSideMenu, (listNavBar: any, nameSideBar: any) => (
         <SideBar
@@ -79,13 +94,29 @@ const TimeSheet = () => {
     ));
 
     const handleSelectPerPage = (e: any) => {
-
+        return setPerPage(e.target.value);
     }
+
+    useEffect(() => {
+        // setSearching(true);
+        callApiGetTimesheet();
+    }, [perPage]);
+
+
+    useEffect(() => {
+        if (!already) {
+            setAlready(true);
+        }
+    }, [already]);
+
+    useEffect(() => {
+        callApiGetTimesheet();
+    }, [])
 
     return (
         <>
 
-            <main className="custom-container main-container pt-40 d-flex">
+            {already == false ? <Loading></Loading> : <main className="custom-container main-container pt-40 d-flex">
                 <div className="main-sidebar">
                     {sidebarComponents}
                 </div>
@@ -98,15 +129,15 @@ const TimeSheet = () => {
                             <div className="d-flex form-group">
                                 <label className="label" htmlFor="select-list">Choose from list:</label>
                                 <Form.Check type='radio' name='group1' id="select-list" inline></Form.Check>
-                                <Form.Select className="select-box ">
-                                    <option value={1} selected>This month</option>
+                                <Form.Select className="select-box " defaultValue={1}>
+                                    <option value={1} >This month</option>
                                     <option value={2}>Last month</option>
                                 </Form.Select>
                             </div>
                             <div className='sort-date d-flex'>
                                 <label className="label">Sort by work date:</label>
-                                <Form.Select size='sm' className='select-sort'>
-                                    <option value={1} selected>Ascending</option>
+                                <Form.Select size='sm' className='select-sort' defaultValue={1}>
+                                    <option value={1} >Ascending</option>
                                     <option value={2}>Descending</option>
                                 </Form.Select>
                             </div>
@@ -138,36 +169,54 @@ const TimeSheet = () => {
                             <label className='my-2'>Total number of records: </label>
                             <div className="d-flex per-page my-2">
                                 <label className="label">Sort by work date:</label>
-                                <select name="perPage" className="px-2 ms-2" onSelect={(e: any) => handleSelectPerPage(e)}>
+                                <select name="perPage" className="px-2 ms-2" defaultValue={perPage} onChange={(e: any) => handleSelectPerPage(e)}>
                                     <option value={25} >--25--</option>
-
-                                    <option value={50} selected>--50--</option>
+                                    <option value={50}>--50--</option>
                                     <option value={100}>--100--</option>
                                     <option value={150}>--150--</option>
                                 </select>
                             </div>
                         </div>
                         <Row>
-                            <Table bordered size='sm'>
-                                <thead >
-                                    <tr >
+                            {
+                                searching ? <Searching></Searching> : <Table bordered size='sm'>
+                                    <thead >
+                                        <tr >
+                                            {
+                                                _.map(tableResultSchema, ({ title, schema }: any, key: any) => (
+                                                    <th key={key} className={`text-white bg-gradient-black-white tb-header`}> <span>
+                                                        {title}</span></th>
+                                                ))
+                                            }
+                                        </tr>
                                         {
-                                            _.map(tableResultSchema, ({ title, schema }: any, key: any) => (
-                                                <th key={key} className={`text-white bg-gradient-black-white tb-header`}> <span>
-                                                    {title}</span></th>
+                                            _.map(resultTimeSheet, ({ title }: any, key: any) => (
+
+                                                <tr key={key}>
+
+                                                    {
+                                                        _.map(title, ({ title }: any, key: any) => {
+                                                            <td key={key} className={`text-white bg-gradient-black-white tb-header`}>
+                                                                <span>
+                                                                    {title.id}
+                                                                </span>
+                                                            </td>
+                                                        })
+                                                    }
+
+
+
+                                                </tr>
                                             ))
                                         }
-                                    </tr>
-                                    <tr>
-
-                                    </tr>
-                                </thead>
-                            </Table>
+                                    </thead>
+                                </Table>
+                            }
                         </Row>
                     </div>
                 </div>
             </main >
-
+            }
         </>
     )
 }

@@ -3,11 +3,18 @@
 import { useEffect, useState } from 'react';
 import { Container, Form, Button, Image } from 'react-bootstrap';
 import axios from 'axios';
+import { Route } from 'next';
+import Loading from '../Components/Loading/Loading';
+import redirect from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [validated, setValidated] = useState(false);
+    const [already, setAlready] = useState(false);
+
+    const router = useRouter();
 
     const onSubmit = async (e: any) => {
         const form = e.currentTarget;
@@ -19,34 +26,44 @@ const Login = () => {
         console.log(email, password);
     }
 
-    useEffect(() => {
-        if (validated) {
-            axios.post("http://192.168.137.1:8080/api/user/login", {
+    const handleLogin = async (e: any) => {
+        setAlready(false);
+        axios.request({
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            url: `http://localhost:8080/api/user/login`,
+            timeout: 5000,
+            responseType: 'json',
+            data: {
                 email_username: email,
                 password: password,
-            }).then((response) => {
-                console.log(response);
-                if (response.data.login === true) {
-                    const data = response.data;
+            },
+        }).then((response) => {
+            if (response.status === 200 && response.data.email === email) {
+                console.log(response.data);
+                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem('employeeId', response.data.employee.id);
+                localStorage.setItem('employeeFirstName', response.data.employee.first_name);
+                localStorage.setItem('employeeLastName', response.data.employee.last_name);
+                localStorage.setItem('employeeAvatar', response.data.employee.avatar);
+                localStorage.setItem('employeeGender', response.data.employee.gender);
+                localStorage.setItem('employeePosition', response.data.employee.position);
+                return router.push('/time-sheet');
+            }
+        }).catch((error) => {
 
-                    // Lưu token vào local storage
-                    localStorage.setItem("token", data.access_token);
+        });
+    }
 
-                    console.log(localStorage.getItem("token"));
-                    // Chuyển hướng đến trang chủ
-                    window.location.href = "/";
-                } else {
-                    alert(response.data.message);
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
+    useEffect(() => {
+        if (!already) {
+            setAlready(true);
         }
-    }, [email, password]);
+    }, [already]);
 
     return (
         <>
-            <Container fluid className='bg-info'>
+            {already == false ? <Loading></Loading> : <Container fluid className='bg-info'>
                 <Container className='align-items-center col-lg-4 vh-100 d-flex ' fluid>
                     <Container className='bg-white border-box col-xs-4' fluid>
                         <Form noValidate validated={validated} onSubmit={onSubmit} className='mt-4'>
@@ -79,12 +96,13 @@ const Login = () => {
                                 <Form.Label>Chưa có tài khoản <a href='/register'>Sign Up</a></Form.Label>
                             </Form.Group>
                             <div className='d-grid mb-3'>
-                                <Button type='submit' variant='success'>Login</Button>
+                                <Button type='button' onClick={(event) => handleLogin(event)}>Login</Button>
                             </div>
                         </Form>
                     </Container>
                 </Container>
             </Container>
+            }
         </>
     );
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { Container, Row, Col } from 'react-bootstrap';
-
+import Image from 'next/image';
 
 const footer = (props: any) => {
   return (
