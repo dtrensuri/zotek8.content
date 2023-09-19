@@ -5,7 +5,7 @@ import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table } from "
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
-import { title } from "process"
+import axios from 'axios';
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -57,6 +57,17 @@ const TimeSheet = () => {
         { schema: 'action', title: 'Action' }
     ];
 
+    const callApiGetTimesheet = () => {
+        axios.request({
+            url: '',
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+        })
+    }
+
 
 
     const sidebarComponents = _.map(listSideMenu, (listNavBar: any, nameSideBar: any) => (
@@ -66,6 +77,10 @@ const TimeSheet = () => {
             listNavBar={listNavBar}
         />
     ));
+
+    const handleSelectPerPage = (e: any) => {
+
+    }
 
     return (
         <>
@@ -123,7 +138,7 @@ const TimeSheet = () => {
                             <label className='my-2'>Total number of records: </label>
                             <div className="d-flex per-page my-2">
                                 <label className="label">Sort by work date:</label>
-                                <select name="perPage" className="px-2 ms-2">
+                                <select name="perPage" className="px-2 ms-2" onSelect={(e: any) => handleSelectPerPage(e)}>
                                     <option value={25} >--25--</option>
 
                                     <option value={50} selected>--50--</option>
