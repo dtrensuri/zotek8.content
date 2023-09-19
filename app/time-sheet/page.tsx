@@ -12,42 +12,44 @@ import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
 
 const TimeSheet = () => {
     // const router = useRouter();
+
+    const INITIAL_PAGE = 1;
+    const INITIAL_PER_PAGE = 50;
+
     const [optionsState, setOptionsState] = useState(1);
-    const [already, setAlready] = useState(false);
-    const [perPage, setPerPage] = useState(50);
+    const [alreadyFetched, setAlreadyFetched] = useState(false);
+    const [perPage, setPerPage] = useState(INITIAL_PER_PAGE);
     const [searching, setSearching] = useState(false);
-    const [page, setPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
     const [resultTimeSheet, setResultTimeSheet] = useState();
+    const [tableTimeSheet, setTableTimeSheet] = useState();
 
-    const listSideMenu = {
-        'TimeSheet':
-            [
-                { title: 'My Timesheet', href: '#', name: '', id: '', class: '', },
-                { title: 'My Request', href: '#', name: '', id: '', class: '', },
-                { title: 'My Leave', href: '#', name: '', id: '', class: '', },
-                { title: 'Member setting', href: '#', name: '', id: '', class: '', },
-                { title: 'Holiday', href: '#', name: '', id: '', class: '', }
-            ],
-        'Manager':
-            [
-                { title: 'Confirm request', href: '#', name: '', id: '', class: '', },
-                { title: 'Reminder member', href: '#', name: '', id: '', class: '', },
-                { title: 'Member leave', href: '#', name: '', id: '', class: '', },
-                { title: 'Assign', href: '#', name: '', id: '', class: '', },
-                { title: 'Member timesheet', href: '#', name: '', id: '', class: '', },
-                { title: 'Member setting', href: '#', name: '', id: '', class: '', }
-            ],
-        'Help':
-            [
-                { title: 'Help', href: '#', name: '', id: '', class: '', },
-                { title: 'About', href: '#', name: '', id: '', class: '', },
-                { title: 'Feedback', href: '#', name: '', id: '', class: '', },
-                { title: 'Calender', href: '#', name: '', id: '', class: '', },
-                { title: 'Helpdesk', href: '#', name: '', id: '', class: '', }
-            ],
-    }
+    const sideMenu = {
+        'TimeSheet': [
+            { title: 'My Timesheet', href: '#', name: '', id: '', class: '', },
+            { title: 'My Request', href: '#', name: '', id: '', class: '', },
+            { title: 'My Leave', href: '#', name: '', id: '', class: '', },
+            { title: 'Member setting', href: '#', name: '', id: '', class: '', },
+            { title: 'Holiday', href: '#', name: '', id: '', class: '', }
+        ],
+        'Manager': [
+            { title: 'Confirm request', href: '#', name: '', id: '', class: '', },
+            { title: 'Reminder member', href: '#', name: '', id: '', class: '', },
+            { title: 'Member leave', href: '#', name: '', id: '', class: '', },
+            { title: 'Assign', href: '#', name: '', id: '', class: '', },
+            { title: 'Member timesheet', href: '#', name: '', id: '', class: '', },
+            { title: 'Member setting', href: '#', name: '', id: '', class: '', }
+        ],
+        'Help': [
+            { title: 'Help', href: '#', name: '', id: '', class: '', },
+            { title: 'About', href: '#', name: '', id: '', class: '', },
+            { title: 'Feedback', href: '#', name: '', id: '', class: '', },
+            { title: 'Calender', href: '#', name: '', id: '', class: '', },
+            { title: 'Helpdesk', href: '#', name: '', id: '', class: '', }
+        ],
+    };
 
-    const tableResultSchema = [
+    const tableColumns = [
         { schema: 'no', title: 'No' },
         { schema: 'date', title: 'Date' },
         { schema: 'check_in', title: 'Checkin' },
@@ -66,158 +68,243 @@ const TimeSheet = () => {
     ];
 
     const callApiGetTimesheet = () => {
-        axios.request({
-            url: 'http://localhost:8080/api//user/get-time-sheets',
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-            },
-            params: {
-                page: page,
-                perPage: perPage,
-            },
-        }).then(response => {
-            setResultTimeSheet(response.data.results);
-            console.log(response);
-        }).catch(err => {
-            alert(err.message)
-        });
-    }
+        axios
+            .get('http://localhost:8080/api/user/get-time-sheets', {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+                params: {
+                    page: currentPage,
+                    perPage: perPage,
+                },
+            })
+            .then(response => {
+                const dataResult = response.data.results;
+                let rowDataTimeSheet: any = [];
 
-    const sidebarComponents = _.map(listSideMenu, (listNavBar: any, nameSideBar: any) => (
+                dataResult.forEach((dataRow: any, key: any) => {
+                    // let date =  
+                    rowDataTimeSheet.push({
+                        no: key + 1,
+                        date: new Date(dataRow.date).toDateString(),
+                        check_in: dataRow.time_in,
+                        check_out: dataRow.time_out,
+                        late: 1,
+                        early: 1,
+                        in_office: 1,
+                        ot: 1,
+                        work_time: 1,
+                        lack: 1,
+                        comp: 1,
+                        p_leave: 1,
+                        u_leave: 1,
+                        note: 1,
+                        action: 1,
+
+                    });
+                });
+                setResultTimeSheet(rowDataTimeSheet);
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred while fetching timesheet data.');
+            });
+    };
+
+    const handleTimeSheet = () => {
+        renderTimesheets();
+    };
+
+    const sideBarComponents = _.map(sideMenu, (navBarItems: any, sideBarName: any) => (
         <SideBar
-            key={nameSideBar}
-            nameSideBar={nameSideBar}
-            listNavBar={listNavBar}
+            key={sideBarName}
+            nameSideBar={sideBarName}
+            listNavBar={navBarItems}
         />
     ));
 
-    const handleSelectPerPage = (e: any) => {
-        return setPerPage(e.target.value);
+
+    const renderTimesheets = async () => {
+        const dataTable = await _.map(resultTimeSheet, (rowData: any, key: any) => {
+            return (
+                <tr key={key}>
+                    {tableColumns.map(({ schema }, key) => (
+                        <td key={key}>
+                            <span className="d-flex align-item-center justify-content-center">{rowData[schema]}</span>
+                        </td>
+                    ))}
+                </tr>
+            );
+        });
+        setTableTimeSheet(dataTable);
     }
 
+
+
+    const handleSelectPerPage = (e: any) => {
+        setPerPage(e.target.value);
+    };
+
     useEffect(() => {
-        // setSearching(true);
         callApiGetTimesheet();
     }, [perPage]);
 
-
     useEffect(() => {
-        if (!already) {
-            setAlready(true);
+        if (!alreadyFetched) {
+            setAlreadyFetched(true);
         }
-    }, [already]);
+    }, [alreadyFetched]);
 
     useEffect(() => {
         callApiGetTimesheet();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        handleTimeSheet();
+        setSearching(false);
+    }, [resultTimeSheet]);
 
     return (
         <>
+            {alreadyFetched === false ? (
+                <Loading />
+            ) : (
+                <main className="custom-container main-container pt-40 d-flex">
+                    <div className="main-sidebar">{sideBarComponents}</div>
+                    <div className="main-content">
+                        <div className="search-timesheet">
+                            <div className="title bg-gradient-black-white py-2 ps-4 text-white">
+                                My Timesheet
+                            </div>
+                            <Form className="search-form bg-white border borer-2 mb-3">
+                                <div className="d-flex form-group">
+                                    <label className="label" htmlFor="select-list">
+                                        Choose from list:
+                                    </label>
+                                    <Form.Check
+                                        type="radio"
+                                        name="group1"
+                                        id="select-list"
+                                        inline
+                                    />
+                                    <Form.Select
+                                        className="select-box"
+                                        defaultValue={1}
+                                    >
+                                        <option value={1}>This month</option>
+                                        <option value={2}>Last month</option>
+                                    </Form.Select>
+                                </div>
+                                <div className="sort-date d-flex">
+                                    <label className="label">
+                                        Sort by work date:
+                                    </label>
+                                    <Form.Select
+                                        size="sm"
+                                        className="select-sort"
+                                        defaultValue={1}
+                                    >
+                                        <option value={1}>Ascending</option>
+                                        <option value={2}>Descending</option>
+                                    </Form.Select>
+                                </div>
 
-            {already == false ? <Loading></Loading> : <main className="custom-container main-container pt-40 d-flex">
-                <div className="main-sidebar">
-                    {sidebarComponents}
-                </div>
-                <div className="main-content">
-                    <div className="search-timesheet">
-                        <div className="title bg-gradient-black-white py-2 ps-4 text-white">
-                            My Timesheet
+                                <div className="form-group">
+                                    <Form.Label className="label" htmlFor="select-day">
+                                        Choose start, end:
+                                    </Form.Label>
+                                    <Form.Check
+                                        type="radio"
+                                        name="group1"
+                                        id="select-day"
+                                        inline
+                                    />
+                                    <br />
+                                    <div className="select-day">
+                                        <Form.Group className="d-flex mb-3 date-group">
+                                            <Form.Label className="from-to date-group">
+                                                From:
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="date"
+                                                size="sm"
+                                                className="date ms-2"
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="d-flex date-group">
+                                            <Form.Label className="from-to">
+                                                To:
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="date"
+                                                className="date ms-2"
+                                                size="sm"
+                                            />
+                                        </Form.Group>
+                                    </div>
+                                </div>
+                                <Container className="d-flex justify-content-center p-2">
+                                    <div className="btn-row">
+                                        <Button className="button1 me-2">
+                                            Search
+                                        </Button>
+                                        <Button className="button1 ms-2">
+                                            Reset
+                                        </Button>
+                                    </div>
+                                </Container>
+                            </Form>
                         </div>
-                        <Form className="search-form bg-white border borer-2 mb-3">
-                            <div className="d-flex form-group">
-                                <label className="label" htmlFor="select-list">Choose from list:</label>
-                                <Form.Check type='radio' name='group1' id="select-list" inline></Form.Check>
-                                <Form.Select className="select-box " defaultValue={1}>
-                                    <option value={1} >This month</option>
-                                    <option value={2}>Last month</option>
-                                </Form.Select>
-                            </div>
-                            <div className='sort-date d-flex'>
-                                <label className="label">Sort by work date:</label>
-                                <Form.Select size='sm' className='select-sort' defaultValue={1}>
-                                    <option value={1} >Ascending</option>
-                                    <option value={2}>Descending</option>
-                                </Form.Select>
-                            </div>
-
-                            <div className="form-group">
-                                <Form.Label className='label' htmlFor="select-day">Choose start, end:</Form.Label>
-                                <Form.Check type='radio' name='group1' id="select-day" inline></Form.Check><br />
-                                <div className="select-day">
-                                    <Form.Group className='d-flex mb-3 date-group'>
-                                        <Form.Label className="from-to date-group">From:</Form.Label>
-                                        <Form.Control type='date' size='sm' className="date ms-2" />
-                                    </Form.Group>
-                                    <Form.Group className='d-flex date-group'>
-                                        <Form.Label className="from-to">To:</Form.Label>
-                                        <Form.Control type='date' className="date ms-2" size='sm' />
-                                    </Form.Group>
+                        <div className="result-container my-3 bg-white container-fluid">
+                            <div className="d-flex total">
+                                <label className="my-2">
+                                    Total number of records:
+                                </label>
+                                <div className="d-flex per-page my-2">
+                                    <label className="label">
+                                        Sort by work date:
+                                    </label>
+                                    <select
+                                        name="perPage"
+                                        className="px-2 ms-2"
+                                        defaultValue={perPage}
+                                        onChange={(e) => handleSelectPerPage(e)}
+                                    >
+                                        <option value={25}>--25--</option>
+                                        <option value={50}>--50--</option>
+                                        <option value={100}>--100--</option>
+                                        <option value={150}>--150--</option>
+                                    </select>
                                 </div>
                             </div>
-                            <Container className='d-flex justify-content-center p-2'>
-                                <div className="btn-row">
-                                    <Button className='button1 me-2'>Search</Button>
-                                    <Button className='button1 ms-2'>Reset</Button>
-                                </div>
-                            </Container>
-                        </Form>
-                    </div>
-                    <div className="result-container  my-3 bg-white container-fluid">
-                        <div className="d-flex total">
-                            <label className='my-2'>Total number of records: </label>
-                            <div className="d-flex per-page my-2">
-                                <label className="label">Sort by work date:</label>
-                                <select name="perPage" className="px-2 ms-2" defaultValue={perPage} onChange={(e: any) => handleSelectPerPage(e)}>
-                                    <option value={25} >--25--</option>
-                                    <option value={50}>--50--</option>
-                                    <option value={100}>--100--</option>
-                                    <option value={150}>--150--</option>
-                                </select>
-                            </div>
-                        </div>
-                        <Row>
-                            {
-                                searching ? <Searching></Searching> : <Table bordered size='sm'>
-                                    <thead >
-                                        <tr >
-                                            {
-                                                _.map(tableResultSchema, ({ title, schema }: any, key: any) => (
-                                                    <th key={key} className={`text-white bg-gradient-black-white tb-header`}> <span>
-                                                        {title}</span></th>
-                                                ))
-                                            }
+                            <Row className="table-timesheet">
+                                <Table bordered size="sm">
+                                    <thead className="table-header">
+                                        <tr>
+                                            {tableColumns.map(
+                                                ({ title }, key) => (
+                                                    <th
+                                                        key={key}
+                                                        className={`text-white bg-gradient-black-white tb-header`}
+                                                    >
+                                                        <span>{title}</span>
+                                                    </th>
+                                                )
+                                            )}
                                         </tr>
-                                        {
-                                            _.map(resultTimeSheet, ({ title }: any, key: any) => (
-
-                                                <tr key={key}>
-
-                                                    {
-                                                        _.map(title, ({ title }: any, key: any) => {
-                                                            <td key={key} className={`text-white bg-gradient-black-white tb-header`}>
-                                                                <span>
-                                                                    {title.id}
-                                                                </span>
-                                                            </td>
-                                                        })
-                                                    }
-
-
-
-                                                </tr>
-                                            ))
-                                        }
                                     </thead>
+                                    <tbody className="table-body">
+                                        {tableTimeSheet}
+                                    </tbody>
                                 </Table>
-                            }
-                        </Row>
+                            </Row>
+                        </div>
                     </div>
-                </div>
-            </main >
-            }
+                </main>
+            )}
         </>
-    )
+    );
+
 }
 export default TimeSheet
