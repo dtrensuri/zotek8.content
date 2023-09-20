@@ -1,5 +1,5 @@
 'use client'
-
+import Footer from "../Components/Footers/Footer"
 import AppNavbar from "../Components/NavBar/AppNavBar"
 import SideBar from "../Components/SideBar/SideBar"
 import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table } from "react-bootstrap"
@@ -154,6 +154,7 @@ const TimeSheet = () => {
                         </div>
                     </div>
                 </main >
+                <Footer></Footer>
             </div >
         </>
     )
