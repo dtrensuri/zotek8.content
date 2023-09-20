@@ -21,6 +21,7 @@
     "eslint-config-next": "13.4.19",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-bootstrap": "^2.8.0",

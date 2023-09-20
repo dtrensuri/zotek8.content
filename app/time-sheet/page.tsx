@@ -7,8 +7,11 @@ import "./page.scss"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Loading from "../Components/Loading/Loading"
-import Searching from "../Components/Loading/searching"
+import Searching from '../Components/Loading/searching';
 import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
+import { Http2ServerResponse } from "http2"
+const moment = require('moment');
+
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -16,13 +19,21 @@ const TimeSheet = () => {
     const INITIAL_PAGE = 1;
     const INITIAL_PER_PAGE = 50;
 
-    const [optionsState, setOptionsState] = useState(1);
+
     const [alreadyFetched, setAlreadyFetched] = useState(false);
     const [perPage, setPerPage] = useState(INITIAL_PER_PAGE);
     const [searching, setSearching] = useState(false);
     const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
     const [resultTimeSheet, setResultTimeSheet] = useState();
     const [tableTimeSheet, setTableTimeSheet] = useState();
+    const [searchOption, setSearchOption] = useState(1);
+    const [optionsState, setOptionsState] = useState(1);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [sortOption, setSortOption] = useState('DESC');
+    const [lastOption, setLastOption] = useState('thisMonth');
+    const [numberRecord, setNumberRecord] = useState(0);
+    const HOST = 'http://localhost:8080';
 
     const sideMenu = {
         'TimeSheet': [
@@ -67,9 +78,10 @@ const TimeSheet = () => {
         { schema: 'action', title: 'Action' }
     ];
 
-    const callApiGetTimesheet = () => {
-        axios
-            .get('http://localhost:8080/api/user/get-time-sheets', {
+
+    const callApiGetTimesheet = async (url: string) => {
+        try {
+            const response = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -77,52 +89,71 @@ const TimeSheet = () => {
                 params: {
                     page: currentPage,
                     perPage: perPage,
+                    startDate: startDate,
+                    endDate: endDate,
+                    orderBy: sortOption,
                 },
-            })
-            .then(response => {
-                const dataResult = response.data.results;
-                let rowDataTimeSheet: any = [];
-
-                dataResult.forEach((dataRow: any, key: any) => {
-                    // let date =  
-                    rowDataTimeSheet.push({
-                        no: key + 1,
-                        date: new Date(dataRow.date).toDateString(),
-                        check_in: dataRow.time_in,
-                        check_out: dataRow.time_out,
-                        late: 1,
-                        early: 1,
-                        in_office: 1,
-                        ot: 1,
-                        work_time: 1,
-                        lack: 1,
-                        comp: 1,
-                        p_leave: 1,
-                        u_leave: 1,
-                        note: 1,
-                        action: 1,
-
-                    });
-                });
-                setResultTimeSheet(rowDataTimeSheet);
-            })
-            .catch(err => {
-                console.error(err);
-                alert('An error occurred while fetching timesheet data.');
             });
+            handleTimeSheet(response);
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while fetching timesheet data.');
+        }
     };
 
-    const handleTimeSheet = () => {
-        renderTimesheets();
+    const callApiOption: Record<string, string> = {
+        thisMonth: `${HOST}/api/user/search-timesheet/this-month`,
+        lastMonth: `${HOST}/api/user/search-timesheet/last-month`,
+        byDate: `${HOST}/api/user/search-timesheet/find-by-date`,
     };
 
-    const sideBarComponents = _.map(sideMenu, (navBarItems: any, sideBarName: any) => (
-        <SideBar
-            key={sideBarName}
-            nameSideBar={sideBarName}
-            listNavBar={navBarItems}
-        />
-    ));
+    const findByOption = () => {
+        switch (optionsState) {
+            case 1:
+                setLastOption('thisMonth');
+                callApiGetTimesheet(callApiOption['thisMonth']);
+                break;
+            case 2:
+                setLastOption('lastMonth');
+                callApiGetTimesheet(callApiOption['lastMonth']);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const findByDate = () => {
+        callApiGetTimesheet(callApiOption[lastOption]);
+        setLastOption('byDate');
+    };
+
+    const handleSearchTimesheet = () => {
+        switch (searchOption) {
+            case 1:
+                findByOption();
+                break;
+            case 2:
+                findByDate();
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleTimeSheet = (response: any) => {
+        const dataResult = response.data.results;
+        const rowDataTimeSheet = dataResult.map((dataRow: any, key: any) => {
+            return {
+                no: key + 1,
+                date: new Date(dataRow.date).toDateString(),
+                check_in: dataRow.time_in,
+                check_out: dataRow.time_out,
+            };
+        });
+        // console.log(dataResult);
+        setNumberRecord(response.data.total);
+        setResultTimeSheet(rowDataTimeSheet);
+    };
 
 
     const renderTimesheets = async () => {
@@ -141,13 +172,12 @@ const TimeSheet = () => {
     }
 
 
-
     const handleSelectPerPage = (e: any) => {
         setPerPage(e.target.value);
     };
 
     useEffect(() => {
-        callApiGetTimesheet();
+        callApiGetTimesheet(callApiOption[lastOption]);
     }, [perPage]);
 
     useEffect(() => {
@@ -157,13 +187,19 @@ const TimeSheet = () => {
     }, [alreadyFetched]);
 
     useEffect(() => {
-        callApiGetTimesheet();
-    }, []);
-
-    useEffect(() => {
-        handleTimeSheet();
-        setSearching(false);
+        renderTimesheets();
     }, [resultTimeSheet]);
+
+
+    const sideBarComponents = _.map(sideMenu, (navBarItems: any, sideBarName: any) => (
+        <SideBar
+            key={sideBarName}
+            nameSideBar={sideBarName}
+            listNavBar={navBarItems}
+        />
+    ));
+
+
 
     return (
         <>
@@ -187,10 +223,14 @@ const TimeSheet = () => {
                                         name="group1"
                                         id="select-list"
                                         inline
+                                        defaultChecked={true}
+                                        value={1}
+                                        onClick={(e: any) => setSearchOption(parseInt(e.target.value))}
                                     />
                                     <Form.Select
                                         className="select-box"
-                                        defaultValue={1}
+                                        defaultValue={optionsState}
+                                        onChange={(e: any) => setOptionsState(parseInt(e.target.value))}
                                     >
                                         <option value={1}>This month</option>
                                         <option value={2}>Last month</option>
@@ -203,10 +243,10 @@ const TimeSheet = () => {
                                     <Form.Select
                                         size="sm"
                                         className="select-sort"
-                                        defaultValue={1}
-                                    >
-                                        <option value={1}>Ascending</option>
-                                        <option value={2}>Descending</option>
+                                        defaultValue={sortOption}
+                                        onChange={(e: any) => { setSortOption(e.target.value) }}                                  >
+                                        <option value={'ASC'}>Ascending</option>
+                                        <option value={'DESC'}>Descending</option>
                                     </Form.Select>
                                 </div>
 
@@ -219,6 +259,8 @@ const TimeSheet = () => {
                                         name="group1"
                                         id="select-day"
                                         inline
+                                        value={2}
+                                        onClick={(e: any) => setSearchOption(parseInt(e.target.value))}
                                     />
                                     <br />
                                     <div className="select-day">
@@ -230,6 +272,7 @@ const TimeSheet = () => {
                                                 type="date"
                                                 size="sm"
                                                 className="date ms-2"
+                                                onChange={(e: any) => setStartDate(e.target.value)}
                                             />
                                         </Form.Group>
                                         <Form.Group className="d-flex date-group">
@@ -240,13 +283,14 @@ const TimeSheet = () => {
                                                 type="date"
                                                 className="date ms-2"
                                                 size="sm"
+                                                onChange={(e: any) => setEndDate(e.target.value)}
                                             />
                                         </Form.Group>
                                     </div>
                                 </div>
                                 <Container className="d-flex justify-content-center p-2">
                                     <div className="btn-row">
-                                        <Button className="button1 me-2">
+                                        <Button className="button1 me-2" onClick={(e: any) => { handleSearchTimesheet(e) }}>
                                             Search
                                         </Button>
                                         <Button className="button1 ms-2">
@@ -259,7 +303,7 @@ const TimeSheet = () => {
                         <div className="result-container my-3 bg-white container-fluid">
                             <div className="d-flex total">
                                 <label className="my-2">
-                                    Total number of records:
+                                    Total number of records: {numberRecord}
                                 </label>
                                 <div className="d-flex per-page my-2">
                                     <label className="label">
