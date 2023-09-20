@@ -1,7 +1,7 @@
 'use client'
 
 import SideBar from "../Components/SideBar/SideBar"
-import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table } from "react-bootstrap"
+import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table, Pagination } from "react-bootstrap"
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
@@ -33,6 +33,8 @@ const TimeSheet = () => {
     const [sortOption, setSortOption] = useState('DESC');
     const [lastOption, setLastOption] = useState('thisMonth');
     const [numberRecord, setNumberRecord] = useState(0);
+    const [numberPage, setNumberPage] = useState(3);
+
     const HOST = 'http://localhost:8080';
 
     const sideMenu = {
@@ -123,11 +125,12 @@ const TimeSheet = () => {
     };
 
     const findByDate = () => {
-        callApiGetTimesheet(callApiOption[lastOption]);
         setLastOption('byDate');
+        callApiGetTimesheet(callApiOption[lastOption]);
     };
 
-    const handleSearchTimesheet = () => {
+    const handleSearchTimesheet = (e: any) => {
+        setCurrentPage(1);
         switch (searchOption) {
             case 1:
                 findByOption();
@@ -150,7 +153,8 @@ const TimeSheet = () => {
                 check_out: dataRow.time_out,
             };
         });
-        // console.log(dataResult);
+        console.log(response.data);
+        setNumberPage(response.data.numPage);
         setNumberRecord(response.data.total);
         setResultTimeSheet(rowDataTimeSheet);
     };
@@ -171,14 +175,44 @@ const TimeSheet = () => {
         setTableTimeSheet(dataTable);
     }
 
+    const renderPagination = () => {
+        if (numberPage <= 7) {
+            let paginate: any = [];
+            for (let i = 1; i <= numberPage; i++) {
+                paginate = [...paginate, <Pagination.Item active={i === currentPage} onClick={() => setCurrentPage(i)}>{i}</Pagination.Item>]
+            }
+            return paginate;
+        } else {
+            return (
+                <>
+                    <Pagination.Item onClick={() => setCurrentPage(1)} active={1 === currentPage} >{1}</Pagination.Item>
+                    <Pagination.Ellipsis />
+
+                    <Pagination.Item active={10 === currentPage} >{10}</Pagination.Item>
+                    <Pagination.Item active={11 === currentPage} >{11}</Pagination.Item>
+                    <Pagination.Item active>{12}</Pagination.Item>
+                    <Pagination.Item active={13 === currentPage} >{13}</Pagination.Item>
+                    <Pagination.Item disabled>{14}</Pagination.Item>
+
+                    <Pagination.Ellipsis />
+                    <Pagination.Item onClick={() => setCurrentPage(numberPage)} active={numberPage === currentPage} >{numberPage}</Pagination.Item>
+                </>
+            )
+        }
+    }
 
     const handleSelectPerPage = (e: any) => {
         setPerPage(e.target.value);
     };
 
     useEffect(() => {
+        setCurrentPage(1);
         callApiGetTimesheet(callApiOption[lastOption]);
     }, [perPage]);
+
+    useEffect(() => {
+        callApiGetTimesheet(callApiOption[lastOption]);
+    }, [currentPage]);
 
     useEffect(() => {
         if (!alreadyFetched) {
@@ -189,7 +223,6 @@ const TimeSheet = () => {
     useEffect(() => {
         renderTimesheets();
     }, [resultTimeSheet]);
-
 
     const sideBarComponents = _.map(sideMenu, (navBarItems: any, sideBarName: any) => (
         <SideBar
@@ -343,7 +376,26 @@ const TimeSheet = () => {
                                     </tbody>
                                 </Table>
                             </Row>
+                            <Row >
+                                {numberPage <= 1 ? <></> :
+                                    <Pagination className="d-flex align-item-center justify-content-center">
+                                        <Pagination.First onClick={() => setCurrentPage(1)} />
+                                        <Pagination.Prev onClick={() => {
+                                            if (currentPage > 1) setCurrentPage(currentPage - 1)
+                                        }} />
+                                        {
+                                            renderPagination()
+                                        }
+                                        <Pagination.Next onClick={() => setCurrentPage(numberPage)} />
+                                        <Pagination.Last onClick={() => {
+                                            if (currentPage < numberPage) setCurrentPage(currentPage + 1)
+                                        }} />
+                                    </Pagination>
+                                }
+                            </Row>
                         </div>
+
+
                     </div>
                 </main>
             )}
