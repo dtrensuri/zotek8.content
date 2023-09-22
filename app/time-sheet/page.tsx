@@ -35,7 +35,7 @@ const TimeSheet = () => {
     const [numberRecord, setNumberRecord] = useState(0);
     const [numberPage, setNumberPage] = useState(3);
 
-    const HOST = 'http://localhost:8080';
+    const HOST = 'http://192.168.137.1:8080';
 
     const sideMenu = {
         'TimeSheet': [
@@ -79,7 +79,10 @@ const TimeSheet = () => {
         { schema: 'note', title: 'Admin note' },
         { schema: 'action', title: 'Action' }
     ];
-
+    const shift_morning_in = moment('08:30:00');
+    const shift_morning_out = '12:00:00';
+    const shift_afternoon_in = '13:00:00';
+    const shift_afternoon_out = moment('17:30:00');
 
     const callApiGetTimesheet = async (url: string) => {
         try {
@@ -151,6 +154,12 @@ const TimeSheet = () => {
                 date: new Date(dataRow.date).toDateString(),
                 check_in: dataRow.time_in,
                 check_out: dataRow.time_out,
+                late: dataRow.time_in < shift_morning_in ? "" : dataRow.time_in - shift_morning_in,
+                early: dataRow.timeout > shift_afternoon_out ? "" : shift_afternoon_out - dataRow.time_out,
+                in_office: dataRow.time_out - dataRow.time_in,
+                ot: dataRow.time_out < shift_afternoon_out ? "" : dataRow.time_out - shift_afternoon_out,
+                work_time: "",
+                lack: "",
             };
         });
         console.log(response.data);
