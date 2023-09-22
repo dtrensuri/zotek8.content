@@ -6,11 +6,11 @@ const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Loading from "../Components/Loading/Loading"
+import Loading from "../Components/Loading/Loading";
 import Searching from '../Components/Loading/searching';
 import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
 import { Http2ServerResponse } from "http2"
-const moment = require('moment');
+const moment =  require('moment');
 
 
 const TimeSheet = () => {
@@ -79,10 +79,10 @@ const TimeSheet = () => {
         { schema: 'note', title: 'Admin note' },
         { schema: 'action', title: 'Action' }
     ];
-    const shift_morning_in = moment('08:30:00');
+    const shift_morning_in = '08:30:00';
     const shift_morning_out = '12:00:00';
     const shift_afternoon_in = '13:00:00';
-    const shift_afternoon_out = moment('17:30:00');
+    const shift_afternoon_out = '17:30:00';
 
     const callApiGetTimesheet = async (url: string) => {
         try {
@@ -146,23 +146,41 @@ const TimeSheet = () => {
         }
     };
 
+    function transMinuteToHour(minutes: any) {
+        const hour = Math.floor(minutes / 60);
+        const remainminute = minutes % 60;
+        return `${hour}:${remainminute}`;
+    }
+
     const handleTimeSheet = (response: any) => {
         const dataResult = response.data.results;
         const rowDataTimeSheet = dataResult.map((dataRow: any, key: any) => {
+          
+            const time_in = dataRow.time_in;
+            const time_out = dataRow.time_out;
+            const only_date = new Date(dataRow.date).toDateString();
+            console.log(only_date);
+            const day_in = new Date(only_date + ' ' + time_in);
+            const day_out = new Date(only_date + ' ' + time_out);
+            const morning_in = new Date(only_date + ' ' + shift_morning_in);
+            const afternoon_out = new Date(only_date + ' ' + shift_afternoon_out);
+            const late_in = transMinuteToHour((day_in.getTime() - morning_in.getTime()) / (1000 * 60));
+            const early_out = transMinuteToHour((afternoon_out.getTime() - day_out.getTime()) / (1000 * 60));
+            const inoffice = transMinuteToHour((day_out.getTime() - day_in.getTime()) / (1000 * 60));
             return {
                 no: key + 1,
-                date: new Date(dataRow.date).toDateString(),
+                date: only_date,
                 check_in: dataRow.time_in,
                 check_out: dataRow.time_out,
-                late: dataRow.time_in < shift_morning_in ? "" : dataRow.time_in - shift_morning_in,
-                early: dataRow.timeout > shift_afternoon_out ? "" : shift_afternoon_out - dataRow.time_out,
-                in_office: dataRow.time_out - dataRow.time_in,
-                ot: dataRow.time_out < shift_afternoon_out ? "" : dataRow.time_out - shift_afternoon_out,
+                late: dataRow.time_in < shift_morning_in ? "" : late_in ,
+                early: dataRow.time_out > shift_afternoon_out ? "" : early_out,
+                in_office: inoffice,
+                ot: dataRow.time_out < shift_afternoon_out ? "" : transMinuteToHour((day_out.getTime() - afternoon_out.getTime()) / (1000 * 60)),
                 work_time: "",
                 lack: "",
             };
         });
-        console.log(response.data);
+        
         setNumberPage(response.data.numPage);
         setNumberRecord(response.data.total);
         setResultTimeSheet(rowDataTimeSheet);
