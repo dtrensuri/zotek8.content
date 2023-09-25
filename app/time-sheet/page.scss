@@ -97,7 +97,6 @@ $border-color: rgb(207, 206, 206);
         }
 
         .result-container {
-            height: 700px;
             border: 1px solid $border-color;
 
             .tb-header {
@@ -125,6 +124,13 @@ $border-color: rgb(207, 206, 206);
                 .per-page {
                     position: absolute;
                     right: 0;
+                }
+            }
+
+            .table-timesheet {
+                .table-body {
+                    height: 500px;
+                    position: relative;
                 }
             }
         }

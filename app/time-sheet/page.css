@@ -1,0 +1,93 @@
+.main-container {
+  position: relative;
+}
+.main-container .main-sidebar .sidebar-menu {
+  width: 270px;
+  border: 1px solid rgb(207, 206, 206);
+}
+.main-container .main-sidebar .sidebar-menu .menu-item:hover {
+  background-color: gray;
+}
+.main-container .main-content {
+  margin-left: calc(10px + 1.5rem);
+  width: 100%;
+}
+.main-container .main-content .search-timesheet .search-form {
+  box-sizing: border-box;
+  position: relative;
+  padding-left: calc(8px + 1.5rem);
+}
+.main-container .main-content .search-timesheet .search-form .form-group {
+  width: 400px;
+  align-items: end;
+}
+.main-container .main-content .search-timesheet .search-form .form-group .label {
+  margin-top: calc(5px + 1.5rem);
+  font-weight: 600;
+  padding: 5px;
+  margin-right: 5px;
+  width: 160px;
+}
+.main-container .main-content .search-timesheet .search-form .form-group .select-box {
+  width: 140px;
+  height: 40px;
+}
+.main-container .main-content .search-timesheet .search-form .form-group .select-day {
+  display: flex;
+  flex-direction: column !important;
+  justify-content: flex-end;
+  align-items: end;
+}
+.main-container .main-content .search-timesheet .search-form .form-group .select-day .date {
+  width: 170px;
+  height: 30px;
+}
+.main-container .main-content .search-timesheet .search-form .sort-date {
+  position: absolute;
+  right: calc(5px + 1.5rem);
+  top: 1.5rem;
+  display: flex;
+}
+.main-container .main-content .search-timesheet .search-form .sort-date .label {
+  padding: 5px;
+  font-weight: 600;
+}
+.main-container .main-content .search-timesheet .search-form .sort-date .select-sort {
+  width: 130px;
+}
+.main-container .main-content .search-timesheet .search-form .btn-row .button1 {
+  background-color: gray;
+  border: black;
+}
+.main-container .main-content .search-timesheet .search-form .btn-row .button1:hover {
+  background-color: rgb(51, 50, 50);
+}
+.main-container .main-content .search-timesheet .search-form .btn-row .button1:active {
+  background-color: gray;
+}
+.main-container .main-content .result-container {
+  height: 350px;
+  border: 1px solid rgb(207, 206, 206);
+}
+.main-container .main-content .result-container .tb-header {
+  border: none;
+  border-right: 1px solid rgb(207, 206, 206);
+}
+.main-container .main-content .result-container .tb-header:last-child {
+  border: none !important;
+}
+.main-container .main-content .result-container .tb-header span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-container .main-content .result-container .total {
+  position: relative;
+}
+.main-container .main-content .result-container .total label {
+  font-weight: 600;
+}
+.main-container .main-content .result-container .total .per-page {
+  position: absolute;
+  right: 0;
+}/*# sourceMappingURL=page.css.map */
