@@ -1,19 +1,25 @@
 'use client'
-<<<<<<< HEAD
-import Footer from "../Components/Footers/Footer"
-import AppNavbar from "../Components/NavBar/AppNavBar"
-=======
 
->>>>>>> 1d0b32b6ebaef4d7e8949e2c7ae745eff4d740fe
+import Footer from "../Components/Footers/Footer"
+import Pagination from 'react-bootstrap/Pagination';
+import AppNavbar from "../Components/NavBar/AppNavBar"
+
+
+
 import SideBar from "../Components/SideBar/SideBar"
 import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table } from "react-bootstrap"
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
+
 import axios from 'axios';
 import Loading from "../Components/Loading/Loading"
 import Searching from "../Components/Loading/searching"
 import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
+
+import { title } from "process"
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -304,16 +310,12 @@ const TimeSheet = () => {
                                     </tbody>
                                 </Table>
                             </Row>
+                            
                         </div>
                     </div>
-<<<<<<< HEAD
-                </main >
-                <Footer></Footer>
-            </div >
-=======
+
                 </main>
             )}
->>>>>>> 1d0b32b6ebaef4d7e8949e2c7ae745eff4d740fe
         </>
     );
 

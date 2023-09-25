@@ -20,14 +20,20 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "font-awesome": "^4.7.0",
+    "jquery": "^3.7.1",
     "lodash": "^4.17.21",
     "mdb-react-ui-kit": "^6.3.0",
     "next": "^13.4.19",
     "react": "18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-dom": "18.2.0",
+    "react-slick": "^0.29.0",
     "sass": "^1.67.0",
+    "slick-carousel": "^1.8.1",
     "swr": "^2.2.2",
     "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "@types/react-slick": "^0.23.10"
   }
 }
