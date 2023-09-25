@@ -1,7 +1,7 @@
 'use client'
 
 import SideBar from "../Components/SideBar/SideBar"
-import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table, Pagination } from "react-bootstrap"
+import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table, Pagination, ButtonGroup } from "react-bootstrap"
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
@@ -131,7 +131,7 @@ const TimeSheet = () => {
         setLastOption('byDate');
         callApiGetTimesheet(callApiOption[lastOption]);
     };
-
+    // add Loading??
     const handleSearchTimesheet = (e: any) => {
         setCurrentPage(1);
         switch (searchOption) {
@@ -145,6 +145,12 @@ const TimeSheet = () => {
                 break;
         }
     };
+
+    function diffTime(a : String, b : String) {
+        const day_a = new Date('1 Jan 2000 ' + a);
+        const day_b = new Date('1 Jan 2000 ' + b);
+        return (day_a.getTime() - day_b.getTime()) / (1000*60);
+    }
 
     function transMinuteToHour(minutes: any) {
         const hour = Math.floor(minutes / 60);
@@ -160,13 +166,9 @@ const TimeSheet = () => {
             const time_out = dataRow.time_out;
             const only_date = new Date(dataRow.date).toDateString();
             console.log(only_date);
-            const day_in = new Date(only_date + ' ' + time_in);
-            const day_out = new Date(only_date + ' ' + time_out);
-            const morning_in = new Date(only_date + ' ' + shift_morning_in);
-            const afternoon_out = new Date(only_date + ' ' + shift_afternoon_out);
-            const late_in = transMinuteToHour((day_in.getTime() - morning_in.getTime()) / (1000 * 60));
-            const early_out = transMinuteToHour((afternoon_out.getTime() - day_out.getTime()) / (1000 * 60));
-            const inoffice = transMinuteToHour((day_out.getTime() - day_in.getTime()) / (1000 * 60));
+            const late_in = transMinuteToHour(diffTime(time_in, shift_morning_in));
+            const early_out = transMinuteToHour(diffTime(shift_afternoon_out, time_out));
+            const inoffice = transMinuteToHour(diffTime(time_out, time_in));
             return {
                 no: key + 1,
                 date: only_date,
@@ -175,9 +177,14 @@ const TimeSheet = () => {
                 late: dataRow.time_in < shift_morning_in ? "" : late_in ,
                 early: dataRow.time_out > shift_afternoon_out ? "" : early_out,
                 in_office: inoffice,
-                ot: dataRow.time_out < shift_afternoon_out ? "" : transMinuteToHour((day_out.getTime() - afternoon_out.getTime()) / (1000 * 60)),
-                work_time: "",
-                lack: "",
+                ot: dataRow.time_out < shift_afternoon_out ? "" : transMinuteToHour(diffTime(time_out, shift_afternoon_out)),
+                work_time: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '08:00' : transMinuteToHour(diffTime(time_out, shift_morning_in) - 60)) :  (time_out > shift_afternoon_out ? transMinuteToHour(diffTime(shift_afternoon_out, time_in) - 60) : transMinuteToHour(diffTime(time_out, time_in) - 60)),
+                lack: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '' : early_out) :  (time_out > shift_afternoon_out ? late_in : transMinuteToHour(diffTime(time_in, shift_morning_in) + diffTime(shift_afternoon_out, time_out))),
+                action: <ButtonGroup>
+                            <Button className="btn btn-default">Forget</Button>
+                            <Button className="btn btn-default">Late/Early</Button>
+                            <Button className="btn btn-default">Leave</Button>
+                        </ButtonGroup>
             };
         });
         
