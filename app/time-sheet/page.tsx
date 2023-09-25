@@ -8,6 +8,7 @@ const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
 import { title } from "process"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const TimeSheet = () => {
     // const router = useRouter();

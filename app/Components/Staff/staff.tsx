@@ -5,7 +5,6 @@ import SideBar from "../SideBar/SideBar";
 import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table } from "react-bootstrap"
 const _ = require('lodash')
 import './staff.scss';
-import { MDBIcon } from "mdb-react-ui-kit";
 const Staff = () => {
     
     const listSideMenu = {

@@ -1,0 +1,32 @@
+h2{
+    color: #21367a ;
+    font-family: "Inter", sans-serif;
+    text-align: center;
+    
+}
+h1 {
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: large;
+    color: #21367a;
+}
+.text-divider {
+    display: flex;
+    align-items: center;
+    --text-divider-gap: 1rem;
+    font-family: "Inter", sans-serif;
+    color: #21367a;
+  }
+  .text-divider::before,
+  .text-divider::after {
+    content: '';
+    height: 1px;
+    background-color: #333;
+    flex-grow: 1;
+  }
+  .text-divider::before {
+    margin-right: var(--text-divider-gap);
+  }
+  .text-divider::after {
+    margin-left: var(--text-divider-gap);
+  }
