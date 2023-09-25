@@ -6,7 +6,7 @@ $container-padding-x:8%;
 
 @mixin make-container($padding-x: $container-padding-x) {
   width: 100%;
-  padding-right: $padding-x;
+  padding-right: 5%;
   padding-left: $padding-x;
 }
 

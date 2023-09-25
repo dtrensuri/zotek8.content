@@ -1,0 +1,33 @@
+.date {
+    margin-left: 2rem;
+    width: 15%;
+}
+
+.from-to {
+    margin-left: 6rem;
+}
+
+.select {
+    width: 146px;
+    display: inline;
+}
+
+.label {
+    margin: 0rem 2rem 2rem 1rem;
+}
+
+.button1 {
+    background-color: grey;
+    color: black;
+    font-weight: bold;
+    width: 100px;
+    border-radius: 0;
+    height: fit-content;
+}
+
+#sort-date {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    position: relative;
+}
