@@ -181,9 +181,9 @@ const TimeSheet = () => {
                 work_time: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '08:00' : transMinuteToHour(diffTime(time_out, shift_morning_in) - 60)) :  (time_out > shift_afternoon_out ? transMinuteToHour(diffTime(shift_afternoon_out, time_in) - 60) : transMinuteToHour(diffTime(time_out, time_in) - 60)),
                 lack: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '' : early_out) :  (time_out > shift_afternoon_out ? late_in : transMinuteToHour(diffTime(time_in, shift_morning_in) + diffTime(shift_afternoon_out, time_out))),
                 action: <ButtonGroup>
-                            <Button className="btn btn-default">Forget</Button>
-                            <Button className="btn btn-default">Late/Early</Button>
-                            <Button className="btn btn-default">Leave</Button>
+                            <Button className="btn btn-default"><span className="border border-2 border-primary"></span>Forget</Button>
+                            <Button className="btn btn-default"><span className="border border-2 border-primary"></span>Late/Early</Button>
+                            <Button className="btn btn-default"><span className="border border-2 border-primary"></span>Leave</Button>
                         </ButtonGroup>
             };
         });
