@@ -1,9 +1,11 @@
 import Link from 'next/link'
-
-export default function Home() {
+import TimeSheet from './time-sheet/page'
+import Staff from './Components/Staff/staff'
+import Home from './home/Home'
+export default function home() {
   return (
     <>
-      <Link href="/login">Login</Link>
+       <Home/>
     </>
   )
 }

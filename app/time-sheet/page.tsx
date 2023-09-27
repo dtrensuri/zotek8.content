@@ -1,17 +1,24 @@
 'use client'
 
+import Footer from "../Components/Footers/Footer"
+import AppNavbar from "../Components/NavBar/AppNavBar"
+
+
+
 import SideBar from "../Components/SideBar/SideBar"
 import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table, Pagination, ButtonGroup } from "react-bootstrap"
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
+
 import axios from 'axios';
 import Loading from "../Components/Loading/Loading";
 import Searching from '../Components/Loading/searching';
 import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
+import { title } from "process"
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Http2ServerResponse } from "http2"
 const moment =  require('moment');
-
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -410,27 +417,11 @@ const TimeSheet = () => {
                                     </tbody>
                                 </Table>
                             </Row>
-                            <Row >
-                                {numberPage <= 1 ? <></> :
-                                    <Pagination className="d-flex align-item-center justify-content-center">
-                                        <Pagination.First onClick={() => setCurrentPage(1)} />
-                                        <Pagination.Prev onClick={() => {
-                                            if (currentPage > 1) setCurrentPage(currentPage - 1)
-                                        }} />
-                                        {
-                                            renderPagination()
-                                        }
-                                        <Pagination.Next onClick={() => setCurrentPage(numberPage)} />
-                                        <Pagination.Last onClick={() => {
-                                            if (currentPage < numberPage) setCurrentPage(currentPage + 1)
-                                        }} />
-                                    </Pagination>
-                                }
-                            </Row>
                         </div>
 
 
                     </div>
+
                 </main>
             )}
         </>

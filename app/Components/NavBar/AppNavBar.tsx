@@ -23,6 +23,7 @@ function AppNavbar() {
                         <Link href={'#'} className='nav-link px-3 mx-1'>Feedback</Link>
                     </Nav>
                 </Navbar.Collapse>
+              
             </div>
         </Navbar>
     );
