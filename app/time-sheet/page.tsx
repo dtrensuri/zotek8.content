@@ -35,7 +35,7 @@ const TimeSheet = () => {
     const [numberRecord, setNumberRecord] = useState(0);
     const [numberPage, setNumberPage] = useState(3);
 
-    const HOST = 'http://localhost:8080   ';
+    const HOST = 'http://localhost:8080';
 
     const sideMenu = {
         'TimeSheet': [

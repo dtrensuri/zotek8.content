@@ -17,7 +17,7 @@ dotenv.config();
 
 
 const app = express();
-const port = process.env.PORT || 8808;
+const port = process.env.PORT || 8080;
 
 moment.tz.setDefault(process.env.TZ);
 
