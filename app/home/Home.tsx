@@ -10,12 +10,25 @@ import Footer from "../Components/Footers/Footer"
 import './Home.scss'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 <link
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
 />
 const Home = () => {
+
+  const [employeeId, setEmployeeId] = useState('');
+  const [employeeFirstName, setEmployeeFirstName] = useState('');
+  const [employeeLastName, setEmployeeLastName] = useState('');
+  const [employeeAvatar, setEmployeeAvatar] = useState('');
+  const [employeeGender, setEmployeeGender] = useState('');
+  const [employeePosition, setEmployeePosition] = useState('');
+
+  const router = useRouter();
+
   const settings = {
     dots: true,
     infinite: true,
@@ -32,43 +45,69 @@ const Home = () => {
     'https://img001.prntscr.com/file/img001/pkwvenYHRNOU5npmATCM9w.png'
   ];
 
+  const handleCheckLogin = async () => {
+    axios.request({
+      method: 'HEAD',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+      },
+      url: `http://localhost:8080/api/user/check-login`,
+      responseType: 'json',
+      data: {
+        'userId': localStorage.getItem('userId'),
+      }
+    }).catch(() => {
+      return router.push('/login');
+    });
+  }
+
+  useEffect(() => {
+
+    if (localStorage.getItem('accessToken') === null) {
+      return router.push('/login');
+    }
+    handleCheckLogin();
+
+  }, []);
+  handleCheckLogin()
   return (
 
     <Container >
 
       <br></br>
       <div>
-      <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
-            <div className="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div className="carousel-inner">
-              <div className="carousel-item active">
-                <Row>
-                  <Col className='text-divider'>
-                    <div>
-                  <h3><strong>PRODUCT TIMEKEEPES BY TRAIN ZOTEK8</strong></h3>
-                  <p>This is the first product of the three brothers. There are still many errors that we hope will be corrected in the near future.</p>
+        <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
+          <div className="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          </div>
+          <div className="carousel-inner">
+            <div className="carousel-item active">
+              <Row>
+                <Col className='text-divider'>
+                  <div>
+                    <h3><strong>PRODUCT TIMEKEEPES BY TRAIN ZOTEK8</strong></h3>
+                    <p>This is the first product of the three brothers. There are still many errors that we hope will be corrected in the near future.</p>
                   </div>
-                  </Col>
-                  <Col><img src="https://zotek8.com/wp-content/uploads/2023/06/homeTab-1.png" className="d-block w-100" alt="..." /></Col>
-                </Row>
-                
+                </Col>
+                <Col><img src="https://zotek8.com/wp-content/uploads/2023/06/homeTab-1.png" className="d-block w-100" alt="..." /></Col>
+              </Row>
+
+            </div>
+            <div className="carousel-item">
+              <img src="https://zotek8.com/wp-content/uploads/2023/06/smartTab.png" className="d-block w-100" alt="..." />
+              <div className="carousel-caption d-none d-md-block">
               </div>
-              <div className="carousel-item">
-                <img src="https://zotek8.com/wp-content/uploads/2023/06/smartTab.png" className="d-block w-100" alt="..." />
-                <div className="carousel-caption d-none d-md-block">
-                </div>
-              </div>
-              <div className="carousel-item">
-                <img src="https://zotek8.com/wp-content/uploads/2023/06/proactiveTab.png" className="d-block w-100" alt="..." />
-                <div className="carousel-caption d-none d-md-block">
-                </div>
+            </div>
+            <div className="carousel-item">
+              <img src="https://zotek8.com/wp-content/uploads/2023/06/proactiveTab.png" className="d-block w-100" alt="..." />
+              <div className="carousel-caption d-none d-md-block">
               </div>
             </div>
           </div>
+        </div>
       </div>
       <br></br>
       <br />
@@ -123,7 +162,7 @@ const Home = () => {
         </Slider>
       </div>
 
-    
+
     </Container>
 
 

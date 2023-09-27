@@ -5,7 +5,6 @@ import { Container, Form, Button, Image } from 'react-bootstrap';
 import axios from 'axios';
 import { Route } from 'next';
 import Loading from '../Components/Loading/Loading';
-import redirect from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 const Login = () => {
@@ -40,7 +39,7 @@ const Login = () => {
             },
         }).then((response) => {
             if (response.status === 200 && response.data.email === email) {
-                console.log(response.data);
+                localStorage.setItem('userId', response.data.id);
                 localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem('employeeId', response.data.employee.id);
                 localStorage.setItem('employeeFirstName', response.data.employee.first_name);
@@ -50,9 +49,7 @@ const Login = () => {
                 localStorage.setItem('employeePosition', response.data.employee.position);
                 return router.push('/time-sheet');
             }
-        }).catch((error) => {
-
-        });
+        })
     }
 
     useEffect(() => {

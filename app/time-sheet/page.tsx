@@ -13,7 +13,7 @@ import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
 import { title } from "process"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Http2ServerResponse } from "http2"
-const moment =  require('moment');
+const moment = require('moment');
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -148,10 +148,10 @@ const TimeSheet = () => {
         }
     };
 
-    function diffTime(a : String, b : String) {
+    function diffTime(a: String, b: String) {
         const day_a = new Date('1 Jan 2000 ' + a);
         const day_b = new Date('1 Jan 2000 ' + b);
-        return (day_a.getTime() - day_b.getTime()) / (1000*60);
+        return (day_a.getTime() - day_b.getTime()) / (1000 * 60);
     }
 
     function transMinuteToHour(minutes: any) {
@@ -163,7 +163,7 @@ const TimeSheet = () => {
     const handleTimeSheet = (response: any) => {
         const dataResult = response.data.results;
         const rowDataTimeSheet = dataResult.map((dataRow: any, key: any) => {
-          
+
             const time_in = dataRow.time_in;
             const time_out = dataRow.time_out;
             const only_date = new Date(dataRow.date).toDateString();
@@ -176,20 +176,20 @@ const TimeSheet = () => {
                 date: only_date,
                 check_in: dataRow.time_in,
                 check_out: dataRow.time_out,
-                late: dataRow.time_in < shift_morning_in ? "" : late_in ,
+                late: dataRow.time_in < shift_morning_in ? "" : late_in,
                 early: dataRow.time_out > shift_afternoon_out ? "" : early_out,
                 in_office: inoffice,
                 ot: dataRow.time_out < shift_afternoon_out ? "" : transMinuteToHour(diffTime(time_out, shift_afternoon_out)),
-                work_time: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '08:00' : transMinuteToHour(diffTime(time_out, shift_morning_in) - 60)) :  (time_out > shift_afternoon_out ? transMinuteToHour(diffTime(shift_afternoon_out, time_in) - 60) : transMinuteToHour(diffTime(time_out, time_in) - 60)),
-                lack: (time_in < shift_morning_in ) ? (time_out > shift_afternoon_out ? '' : early_out) :  (time_out > shift_afternoon_out ? late_in : transMinuteToHour(diffTime(time_in, shift_morning_in) + diffTime(shift_afternoon_out, time_out))),
+                work_time: (time_in < shift_morning_in) ? (time_out > shift_afternoon_out ? '08:00' : transMinuteToHour(diffTime(time_out, shift_morning_in) - 60)) : (time_out > shift_afternoon_out ? transMinuteToHour(diffTime(shift_afternoon_out, time_in) - 60) : transMinuteToHour(diffTime(time_out, time_in) - 60)),
+                lack: (time_in < shift_morning_in) ? (time_out > shift_afternoon_out ? '' : early_out) : (time_out > shift_afternoon_out ? late_in : transMinuteToHour(diffTime(time_in, shift_morning_in) + diffTime(shift_afternoon_out, time_out))),
                 action: <ButtonGroup>
-                            <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Forget</Button>
-                            <Button className="btn btn-default text-primary" disabled><span className="border border-2 border-primary"></span>Late/Early</Button>
-                            <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Leave</Button>
-                        </ButtonGroup>
+                    <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Forget</Button>
+                    <Button className="btn btn-default text-primary" disabled><span className="border border-2 border-primary"></span>Late/Early</Button>
+                    <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Leave</Button>
+                </ButtonGroup>
             };
         });
-        
+
         setNumberPage(response.data.numPage);
         setNumberRecord(response.data.total);
         setResultTimeSheet(rowDataTimeSheet);
@@ -411,6 +411,24 @@ const TimeSheet = () => {
                                         {tableTimeSheet}
                                     </tbody>
                                 </Table>
+
+                            </Row>
+                            <Row >
+                                {numberPage <= 1 ? <></> :
+                                    <Pagination className="d-flex align-item-center justify-content-center">
+                                        <Pagination.First onClick={() => setCurrentPage(1)} />
+                                        <Pagination.Prev onClick={() => {
+                                            if (currentPage > 1) setCurrentPage(currentPage - 1)
+                                        }} />
+                                        {
+                                            renderPagination()
+                                        }
+                                        <Pagination.Next onClick={() => setCurrentPage(numberPage)} />
+                                        <Pagination.Last onClick={() => {
+                                            if (currentPage < numberPage) setCurrentPage(currentPage + 1)
+                                        }} />
+                                    </Pagination>
+                                }
                             </Row>
                         </div>
 
