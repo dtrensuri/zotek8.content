@@ -35,7 +35,7 @@ const Home = () => {
   return (
 
     <Container >
-      <AppNavbar></AppNavbar>
+
       <br></br>
       <div>
       <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
@@ -123,7 +123,7 @@ const Home = () => {
         </Slider>
       </div>
 
-      <Footer />
+    
     </Container>
 
 

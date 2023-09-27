@@ -16,7 +16,7 @@ function AppNavbar() {
                         <Link href={'#'} className='nav-link px-3 mx-1'>Device</Link>
                         <Link href={'#'} className='nav-link px-3 mx-1'>Asset</Link>
                         <Link href={'#'} className='nav-link px-3 mx-1'>Assessment</Link>
-                        <Link href={'#'} className='nav-link px-3 mx-1'>Staff</Link>
+                        <Link href={'/staff'} className='nav-link px-3 mx-1'>Staff</Link>
                         <Link href={'#'} className='nav-link px-3 mx-1'>Calendar</Link>
                         <Link href={'#'} className='nav-link px-3 mx-1'>Helpdesk</Link>
                         <Link href={'#'} className='nav-link px-3 mx-1'>MTool</Link>

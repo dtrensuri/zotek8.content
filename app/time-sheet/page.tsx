@@ -1,12 +1,7 @@
 'use client'
 
-import Footer from "../Components/Footers/Footer"
-import AppNavbar from "../Components/NavBar/AppNavBar"
-
-
-
 import SideBar from "../Components/SideBar/SideBar"
-import { Row, Col, Container, FormGroup, FormLabel, Form, Button, Table, Pagination, ButtonGroup } from "react-bootstrap"
+import { Row, Container, Form, Button, Table, Pagination, ButtonGroup } from "react-bootstrap"
 const _ = require('lodash')
 import "./page.scss"
 import { useEffect, useState } from 'react';
