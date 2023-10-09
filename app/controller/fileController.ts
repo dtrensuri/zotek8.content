@@ -1,7 +1,4 @@
-const {
-  attendanceSummarySheet,
-  timeSheetDetail,
-} = require("./sheet/attendanceSummarySheet.ts");
+const { timeSheetDetail } = require("./sheet/attendanceSummarySheet.ts");
 
 const exportFileExcel = async (data: JSON) => {
   return await timeSheetDetail(data, "new Excel");
