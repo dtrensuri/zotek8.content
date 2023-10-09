@@ -8,12 +8,8 @@ import { useEffect, useState } from 'react';
 
 import axios from 'axios';
 import Loading from "../Components/Loading/Loading";
-import Searching from '../Components/Loading/searching';
-import ResultTimeSheet from '../Components/TableRow/ResultTimeSheet';
-import { title } from "process"
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Http2ServerResponse } from "http2"
-const moment = require('moment');
+import { format } from 'date-fns';
+const fileController = require('../controller/fileController');
 
 const TimeSheet = () => {
     // const router = useRouter();
@@ -24,7 +20,6 @@ const TimeSheet = () => {
 
     const [alreadyFetched, setAlreadyFetched] = useState(false);
     const [perPage, setPerPage] = useState(INITIAL_PER_PAGE);
-    const [searching, setSearching] = useState(false);
     const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
     const [resultTimeSheet, setResultTimeSheet] = useState();
     const [tableTimeSheet, setTableTimeSheet] = useState();
@@ -103,7 +98,6 @@ const TimeSheet = () => {
             });
             handleTimeSheet(response);
         } catch (err) {
-            console.error(err);
             alert('An error occurred while fetching timesheet data.');
         }
     };
@@ -167,10 +161,10 @@ const TimeSheet = () => {
             const time_in = dataRow.time_in;
             const time_out = dataRow.time_out;
             const only_date = new Date(dataRow.date).toDateString();
-            console.log(only_date);
             const late_in = transMinuteToHour(diffTime(time_in, shift_morning_in));
             const early_out = transMinuteToHour(diffTime(shift_afternoon_out, time_out));
             const inoffice = transMinuteToHour(diffTime(time_out, time_in));
+
             return {
                 no: key + 1,
                 date: only_date,
@@ -182,11 +176,6 @@ const TimeSheet = () => {
                 ot: dataRow.time_out < shift_afternoon_out ? "" : transMinuteToHour(diffTime(time_out, shift_afternoon_out)),
                 work_time: (time_in < shift_morning_in) ? (time_out > shift_afternoon_out ? '08:00' : transMinuteToHour(diffTime(time_out, shift_morning_in) - 60)) : (time_out > shift_afternoon_out ? transMinuteToHour(diffTime(shift_afternoon_out, time_in) - 60) : transMinuteToHour(diffTime(time_out, time_in) - 60)),
                 lack: (time_in < shift_morning_in) ? (time_out > shift_afternoon_out ? '' : early_out) : (time_out > shift_afternoon_out ? late_in : transMinuteToHour(diffTime(time_in, shift_morning_in) + diffTime(shift_afternoon_out, time_out))),
-                action: <ButtonGroup>
-                    <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Forget</Button>
-                    <Button className="btn btn-default text-primary" disabled><span className="border border-2 border-primary"></span>Late/Early</Button>
-                    <Button className="btn btn-default text-primary"><span className="border border-2 border-primary"></span>Leave</Button>
-                </ButtonGroup>
             };
         });
 
@@ -215,7 +204,7 @@ const TimeSheet = () => {
         if (numberPage <= 7) {
             let paginate: any = [];
             for (let i = 1; i <= numberPage; i++) {
-                paginate = [...paginate, <Pagination.Item active={i === currentPage} onClick={() => setCurrentPage(i)}>{i}</Pagination.Item>]
+                paginate = [...paginate, <Pagination.Item key={i} active={i === currentPage} onClick={() => setCurrentPage(i)}>{i}</Pagination.Item>]
             }
             return paginate;
         } else {
@@ -235,6 +224,11 @@ const TimeSheet = () => {
                 </>
             )
         }
+    }
+
+    const handleExportData = () => {
+        console.log(resultTimeSheet);
+        fileController.exportFileExcel(resultTimeSheet);
     }
 
     const handleSelectPerPage = (e: any) => {
@@ -364,6 +358,9 @@ const TimeSheet = () => {
                                         </Button>
                                         <Button className="button1 ms-2">
                                             Reset
+                                        </Button>
+                                        <Button className="button1 ms-2" onClick={(e: any) => { handleExportData() }}>
+                                            Export Excel
                                         </Button>
                                     </div>
                                 </Container>

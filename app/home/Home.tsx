@@ -20,12 +20,6 @@ import axios from 'axios';
 />
 const Home = () => {
 
-  const [employeeId, setEmployeeId] = useState('');
-  const [employeeFirstName, setEmployeeFirstName] = useState('');
-  const [employeeLastName, setEmployeeLastName] = useState('');
-  const [employeeAvatar, setEmployeeAvatar] = useState('');
-  const [employeeGender, setEmployeeGender] = useState('');
-  const [employeePosition, setEmployeePosition] = useState('');
 
   const router = useRouter();
 
@@ -50,7 +44,7 @@ const Home = () => {
       method: 'HEAD',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
       url: `http://localhost:8080/api/user/check-login`,
       responseType: 'json',
@@ -63,12 +57,12 @@ const Home = () => {
   }
 
   useEffect(() => {
-
-    if (localStorage.getItem('accessToken') === null) {
+    console.log(localStorage.getItem('accessToken') == null);
+    if (localStorage.getItem('accessToken') == null || localStorage.getItem('accessToken') == undefined) {
       return router.push('/login');
+    } else {
+      handleCheckLogin();
     }
-    handleCheckLogin();
-
   }, []);
   handleCheckLogin()
   return (
