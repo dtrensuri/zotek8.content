@@ -1,0 +1,38 @@
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+$container-padding-x:8%;
+
+
+
+@mixin make-container($padding-x: $container-padding-x) {
+    width: 100%;
+    padding-right: 5%;
+    padding-left: $padding-x;
+}
+
+$container-max-widths: (sm: 540px,
+    md: 720px,
+    lg: 960px,
+    xl: 1140px,
+    xxl: 1320px);
+
+.custom-container {
+    @include make-container();
+}
+
+
+.bg-gradient-black-white {
+    background: linear-gradient($gray-600, $gray-800, $gray-800, $gray-900);
+}
+
+.pt-40 {
+    padding-top: 40px;
+}
+
+.bg-gray-300 {
+    background-color: $gray-300;
+}
+
+.bg-gray-200 {
+    background-color: $gray-200;
+}

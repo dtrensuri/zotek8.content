@@ -1,0 +1,141 @@
+$border-color: rgb(207, 206, 206);
+
+.main-container {
+    position: relative;
+
+    .main-sidebar {
+
+
+        .sidebar-menu {
+            width: 270px;
+            border: 1px solid $border-color;
+
+            .menu-item {
+                &:hover {
+                    background-color: gray;
+                }
+            }
+        }
+
+    }
+
+    .main-content {
+        margin-left: calc(10px + 1.5rem);
+        width: 100%;
+
+        .search-timesheet {
+            .search-form {
+                box-sizing: border-box;
+                position: relative;
+                padding-left: calc(8px + 1.5rem);
+
+
+
+                .form-group {
+                    width: 400px;
+                    align-items: end;
+
+                    .label {
+                        margin-top: calc(5px + 1.5rem);
+                        font-weight: 600;
+                        padding: 5px;
+                        margin-right: 5px;
+                        width: 160px;
+                    }
+
+                    .select-box {
+                        width: 140px;
+                        height: 40px;
+                    }
+
+                    .select-day {
+                        display: flex;
+                        flex-direction: column !important;
+                        justify-content: flex-end;
+                        align-items: end;
+
+                        .date {
+                            width: 170px;
+                            height: 30px;
+                        }
+                    }
+                }
+
+                .sort-date {
+                    position: absolute;
+                    right: calc(5px + 1.5rem);
+                    top: calc(1.5rem);
+
+                    display: flex;
+
+                    .label {
+                        padding: 5px;
+                        font-weight: 600;
+                    }
+
+                    .select-sort {
+                        height: 40px;
+                        width: 130px;
+                    }
+                }
+
+                .btn-row {
+                    .button1 {
+                        background-color: gray;
+                        border: black;
+
+                        &:hover {
+                            background-color: rgb(51, 50, 50);
+                        }
+
+                        &:active {
+                            background-color: gray;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        .result-container {
+            border: 1px solid $border-color;
+
+            .tb-header {
+                border: none;
+                border-right: 1px solid $border-color;
+
+                &:last-child {
+                    border: none !important;
+                }
+
+                span {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            .total {
+                position: relative;
+
+                label {
+                    font-weight: 600;
+                }
+
+                .per-page {
+                    position: absolute;
+                    right: 0;
+                }
+            }
+
+            .table-timesheet {
+
+                .table-body {
+
+                    position: relative;
+                }
+            }
+        }
+
+    }
+}
